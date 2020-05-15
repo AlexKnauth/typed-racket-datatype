@@ -21,13 +21,14 @@
   (define-syntax-class (variant-name xs)
     #:attributes [name name.? type]
     [pattern name:id/?
-      #:with type (if xs #`(name #,@xs) #'name)])
+      #:with type (if (stx-pair? xs) #`(name #,@xs) #'name)])
 
   (define-syntax-class (variant xs)
     #:attributes [name name.? type def]
     [pattern ({~var || (variant-name xs)} field ...)
-      #:with def (cond [xs #`(struct #,xs name (field ...) #:transparent)]
-                       [else #'(struct name (field ...) #:transparent)])]))
+      #:with def
+      (cond [(stx-pair? xs) #`(struct #,xs name (field ...) #:transparent)]
+            [else           #'(struct name (field ...) #:transparent)])]))
 
 (define-syntax define-datatype
   (syntax-parser

@@ -64,7 +64,23 @@
   (check-equal? (Nat->Natural (Succ (Succ (Succ (Succ (Zero)))))) 4))
 
 ;; ---------------------------------------------------------
-;; Multiple variants, with paraeters
+;; Empty parameters are no parameters
+;; https://github.com/AlexKnauth/typed-racket-datatype/issues/1
+
+(define-datatype (A) (a))
+
+(define the-a : A (a))
+(define (accept-a [v : A]) (match v [(a) 'accepted]))
+
+(module+ test
+  (void (ann A? (pred A)))
+  (check-pred A? (a))
+  (check-pred a? (a))
+  (check-equal? (accept-a the-a) 'accepted)
+  (check-equal? (a) (a)))
+
+;; ---------------------------------------------------------
+;; Multiple variants, with parameters
 
 (define-datatype (Option A) (None) (Some [value : A]))
 
