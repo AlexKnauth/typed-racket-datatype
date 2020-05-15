@@ -6,6 +6,9 @@
 @title{typed-racket-datatype}
 @author{Alex Knauth}
 
+Source code:
+@url{https://github.com/AlexKnauth/typed-racket-datatype}.
+
 @defmodule[typed-racket-datatype]{
 Provides @racket[define-datatype], a form for defining
 Algebraic Data Types in Typed Racket.

@@ -2,6 +2,8 @@ typed-racket-datatype
 =====================
 Algebraic Datatypes for Typed Racket
 
+[_Documentation_](https://docs.racket-lang.org/typed-racket-datatype/index.html).
+
 ```
 (require typed-racket-datatype)
 ```
