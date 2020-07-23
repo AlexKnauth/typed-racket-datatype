@@ -2,5 +2,5 @@
 
 (define collection 'multi)
 
-(define deps '("base" "typed-racket-lib"))
+(define deps '("base" "typed-racket-lib" "syntax-classes-lib"))
 
