@@ -41,5 +41,5 @@ is equivalent to
   (struct variant-id ([field-id : field-type] ...) #:transparent)
   ...
   (define-type name-id (U variant-id ...))
-  (define (variant-id? x) (or (variant-id? x) ...))]
+  (define (name-id? x) (or (variant-id? x) ...))]
 }
