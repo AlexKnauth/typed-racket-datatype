@@ -16,6 +16,8 @@
 (define implies '("typed-racket-datatype-lib"))
 (define update-implies '("typed-racket-datatype-lib"))
 
+(define license 'MIT)
+
 ;; Collection Info
 
 (define scribblings '(("scribblings/typed-racket-datatype.scrbl" ())))

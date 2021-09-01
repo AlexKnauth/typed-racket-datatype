@@ -4,3 +4,4 @@
 
 (define deps '("base" "typed-racket-lib" "syntax-classes-lib"))
 
+(define license 'MIT)
