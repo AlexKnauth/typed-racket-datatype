@@ -88,6 +88,18 @@
 
 (define-datatype (Lst A) (Empty) (Cons [first : A] [rest : (Lst A)]))
 
+(: option-default (All (A) (-> (Option A) A A)))
+(define (option-default o d)
+  (match o
+    [(Some v) v]
+    [(None) d]))
+
+(: option-then (All (A B) (-> (Option A) (-> A (Option B)) (Option B))))
+(define (option-then o f)
+  (match o
+    [(Some a) (f a)]
+    [(None) (None)]))
+
 (: Lst->List (All (A) (-> (Lst A) (Listof A))))
 (define (Lst->List l)
   (match l
@@ -105,6 +117,16 @@
   (check-equal? (match (None) [(None) 'yes]) 'yes)
   (check-equal? (match (Some 'inside) [(Some a) a]) 'inside)
   (check-equal? (Some 7) (Some 7))
+  (check-equal? (option-default (Some 8) 9) 8)
+  (check-equal? (option-default (None) 10) 10)
+  (check-equal? (option-then (Some 11)
+                             (compose (inst Some String) number->string))
+                (Some "11"))
+  (check-equal? (option-then (None)
+                             (compose (inst Some String) number->string))
+                (None))
+  (check-equal? (option-then (Some 12) (λ (a) (None)))
+                (None))
 
   (void (ann Result? (pred (Result Any Any))))
   (check-pred Result? (Ok 1))
@@ -148,5 +170,73 @@
   (void (ann (Consumer2 void) (Consumerof Any)))
   (void (ann (Consumer2 write-char) (Consumerof Nothing)))
   (check-equal? (Consumer1-function (Consumer1 write-char)) write-char))
+
+;; ---------------------------------------------------------
+;; Binary Tree based on Empty
+
+(define-datatype (Tree0of A)
+  (Empty0)
+  (Node0 [value : A] [left : (Tree0of A)] [right : (Tree0of A)]))
+
+(: Leaf0 (All (A) (-> A (Tree0of A))))
+(define (Leaf0 v) (Node0 v (Empty0) (Empty0)))
+
+(: tree0-flatten-list (All (A) (-> (Tree0of A) (Listof A))))
+(define (tree0-flatten-list t)
+  (match t
+    [(Empty0) '()]
+    [(Node0 v l r) (cons v (append (tree0-flatten-list l)
+                                   (tree0-flatten-list r)))]))
+
+(module+ test
+  (void (ann Tree0of? (pred (Tree0of Any))))
+  (check-pred Tree0of? (Empty0))
+  (check-pred Tree0of? (Node0 1
+                              (Node0 2 (Leaf0 3) (Leaf0 4))
+                              (Node0 5 (Leaf0 6) (Leaf0 7))))
+  (check-true (Empty0? (Empty0)))
+  (check-true (Node0? (Node0 4 (Empty0) (Empty0))))
+  (check-false (Empty0? (Node0 4 (Empty0) (Empty0))))
+  (check-false (Node0? (Empty0)))
+  (check-equal? (Node0-value (Node0 4 (Empty0) (Empty0))) 4)
+  (check-equal? (Node0-left (Node0 4 (Leaf0 5) (Empty0))) (Leaf0 5))
+  (check-equal? (Node0-right (Node0 4 (Leaf0 5) (Empty0))) (Empty0))
+  (check-equal? (match (Empty0) [(Empty0) 0]) 0)
+  (check-equal? (match (Leaf0 5) [(Node0 a _ _) a]) 5)
+  (check-equal? (tree0-flatten-list
+                 (Node0 1
+                        (Node0 2 (Leaf0 3) (Leaf0 4))
+                        (Node0 5 (Leaf0 6) (Leaf0 7))))
+                '(1 2 3 4 5 6 7)))
+
+;; ---------------------------------------------------------
+;; Binary Tree based on Leaf
+
+(define-datatype (Tree1of A)
+  (Leaf1 [value : A])
+  (Node1 [left : (Tree1of A)] [right : (Tree1of A)]))
+
+(: tree1-flatten-list (All (A) (-> (Tree1of A) (Listof A))))
+(define (tree1-flatten-list t)
+  (match t
+    [(Leaf1 v) (list v)]
+    [(Node1 l r) (append (tree1-flatten-list l)
+                         (tree1-flatten-list r))]))
+
+;; ---------------------------------------------------------
+;; Binary Tree based on Empty/Leaf
+
+(define-datatype (Tree01of A)
+  (Empty01)
+  (Leaf01 [value : A])
+  (Node01 [left : (Tree01of A)] [right : (Tree01of A)]))
+
+(: tree01-flatten-list (All (A) (-> (Tree01of A) (Listof A))))
+(define (tree01-flatten-list t)
+  (match t
+    [(Empty01) '()]
+    [(Leaf01 v) (list v)]
+    [(Node01 l r) (append (tree01-flatten-list l)
+                          (tree01-flatten-list r))]))
 
 ;; ---------------------------------------------------------

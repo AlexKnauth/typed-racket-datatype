@@ -1,6 +1,6 @@
 #lang typed/racket
 
-;; Doesn't tes datatypes or match directly,
+;; Doesn't test datatypes or match directly,
 ;; tests the occurrence typing pattern behind match.
 
 (: f (∀ (A B C D E F)
